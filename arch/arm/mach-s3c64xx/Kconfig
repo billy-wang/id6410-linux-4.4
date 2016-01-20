@@ -106,6 +106,29 @@ config MACH_ANW6410
 	help
 	  Machine support for the A&W6410
 
+config MACH_MY6410
+	bool "MY6410"
+	select CPU_S3C6410
+	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+	select S3C64XX_SETUP_FB_24BPP	
+	select S3C64XX_SETUP_SDHCI
+	select S3C64XX_SETUP_USB_PHY	
+	select S3C64XX_SETUP_KEYPAD
+	select S3C_DEV_FB
+	select S3C_DEV_HSMMC
+	select S3C_DEV_HSMMC1
+	select S3C_DEV_RTC
+	select S3C_DEV_NAND
+	select S3C_DEV_USB_HOST
+	select S3C_DEV_USB_HSOTG
+	select S3C_DEV_WDT
+	select SAMSUNG_DEV_ADC
+	select SAMSUNG_DEV_KEYPAD
+	select SAMSUNG_DEV_TS
+	select SAMSUNG_DEV_PWM
+	help
+	  Machine support for the Urbetter IDEA6410
+
 config MACH_MINI6410
 	bool "MINI6410"
 	select CPU_S3C6410

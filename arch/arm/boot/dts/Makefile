@@ -531,6 +531,7 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += \
 dtb-$(CONFIG_ARCH_S3C24XX) += \
 	s3c2416-smdk2416.dtb
 dtb-$(CONFIG_ARCH_S3C64XX) += \
+	s3c6410-my6410.dtb \
 	s3c6410-mini6410.dtb \
 	s3c6410-smdk6410.dtb
 dtb-$(CONFIG_ARCH_S5PV210) += \

@@ -224,6 +224,7 @@ extern struct ctl_table random_table[];
 #ifdef CONFIG_EPOLL
 extern struct ctl_table epoll_table[];
 #endif
+extern struct ctl_table log_ctl_table[];  // mod printk
 
 #ifdef HAVE_ARCH_PICK_MMAP_LAYOUT
 int sysctl_legacy_va_layout;
@@ -1172,6 +1173,12 @@ static struct ctl_table kern_table[] = {
 		.extra2		= &one,
 	},
 #endif
+{
+		//.ctl_name		= KERN_DEBUG_PRINTK, /* linux version 2.6.x */
+		.procname		= "modprintk",
+		.mode		= 0555,
+		.child 	= log_ctl_table,
+},
 	{ }
 };
 

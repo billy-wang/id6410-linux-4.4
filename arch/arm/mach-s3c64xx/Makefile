@@ -46,6 +46,7 @@ obj-$(CONFIG_SAMSUNG_DEV_BACKLIGHT)	+= dev-backlight.o
 
 obj-$(CONFIG_MACH_ANW6410)		+= mach-anw6410.o
 obj-$(CONFIG_MACH_HMT)			+= mach-hmt.o
+obj-$(CONFIG_MACH_MY6410)		+= mach-my6410.o
 obj-$(CONFIG_MACH_MINI6410)		+= mach-mini6410.o
 obj-$(CONFIG_MACH_NCP)			+= mach-ncp.o
 obj-$(CONFIG_MACH_REAL6410)		+= mach-real6410.o

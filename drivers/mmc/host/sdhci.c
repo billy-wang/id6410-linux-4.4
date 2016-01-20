@@ -1301,7 +1301,12 @@ static void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
 			pwr = SDHCI_POWER_330;
 			break;
 		default:
+#if 0
 			BUG();
+#else /* fix s3c6410 mmc first start vdd=0 faild */
+			pwr = SDHCI_POWER_330;
+			break;
+#endif
 		}
 	}
 

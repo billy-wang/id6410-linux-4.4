@@ -169,6 +169,7 @@ void __init setup_log_buf(int early);
 __printf(1, 2) void dump_stack_set_arch_desc(const char *fmt, ...);
 void dump_stack_print_info(const char *log_lvl);
 void show_regs_print_info(const char *log_lvl);
+#include <linux/mod_printk.h>
 #else
 static inline __printf(1, 0)
 int vprintk(const char *s, va_list args)
@@ -228,6 +229,9 @@ static inline void dump_stack_print_info(const char *log_lvl)
 static inline void show_regs_print_info(const char *log_lvl)
 {
 }
+
+#define log_printk(mod, lvl, fmt, args...)	do {} while (0)
+
 #endif
 
 extern asmlinkage void dump_stack(void) __cold;
