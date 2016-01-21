@@ -42,6 +42,7 @@ enum log_module_index {
 	LOG_MOD_WDT,
 	LOG_MOD_AXI,			/* bus */
 	LOG_MOD_V4L2,			/* Video for linux 2ed */
+	LOG_MOD_TS,				/* touchscreen */
 	/* ... */
 	LOG_MOD_MAX
 };

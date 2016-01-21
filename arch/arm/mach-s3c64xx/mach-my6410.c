@@ -325,7 +325,9 @@ static struct platform_device *my6410_devices[] __initdata = {
 	&s3c64xx_device_iisv4,
 	&my6410_lcd_powerdev,
 	&my6410_backlight_device,
+#ifdef CONFIG_SAMSUNG_DEV_ADC
 	&s3c_device_adc,
+#endif
 	&s3c_device_ts,
 	&s3c_device_usb_hsotg,
 	&s3c_device_rtc,	

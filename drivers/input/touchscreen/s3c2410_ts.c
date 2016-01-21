@@ -38,6 +38,15 @@
 #include <plat/regs-adc.h>
 #include <linux/platform_data/touchscreen-s3c2410.h>
 
+#define DEBUG
+#define	ts_err(fmt, args...)			log_printk(LOG_MOD_TS, LOG_LEVEL_ERR, fmt, ##args)
+#define	ts_warning(fmt, args...)	log_printk(LOG_MOD_TS, LOG_LEVEL_WARNING, fmt, ##args)
+#define	fpc_info(fmt, args...)		log_printk(LOG_MOD_TS, LOG_LEVEL_ERR, fmt, ##args)
+#define	ts_info(fmt, args...)			log_printk(LOG_MOD_TS, LOG_LEVEL_INFO, fmt, ##args)
+#define	ts_dbg(fmt, args...)			log_printk(LOG_MOD_TS, LOG_LEVEL_DEBUG, fmt, ##args)
+#define	ts_rwreg(fmt, args...)		log_printk(LOG_MOD_TS, LOG_LEVEL_RWREG, fmt, ##args)
+
+
 #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
 
 #define INT_DOWN	(0)
@@ -120,11 +129,14 @@ static void touch_timer_fire(unsigned long data)
 
 			dev_dbg(ts.dev, "%s: X=%lu, Y=%lu, count=%d\n",
 				__func__, ts.xp, ts.yp, ts.count);
+			ts_dbg("%s: X=%lu, Y=%lu, count=%d\n",
+				__func__, ts.xp, ts.yp, ts.count);
 
 			input_report_abs(ts.input, ABS_X, ts.xp);
 			input_report_abs(ts.input, ABS_Y, ts.yp);
 
 			input_report_key(ts.input, BTN_TOUCH, 1);
+			input_report_abs(ts.input, ABS_PRESSURE, 1);
 			input_sync(ts.input);
 
 			ts.xp = 0;
@@ -139,6 +151,7 @@ static void touch_timer_fire(unsigned long data)
 		ts.count = 0;
 
 		input_report_key(ts.input, BTN_TOUCH, 0);
+		input_report_abs(ts.input, ABS_PRESSURE, 0);
 		input_sync(ts.input);
 
 		writel(WAIT4INT | INT_DOWN, ts.io + S3C2410_ADCTSC);
@@ -171,8 +184,10 @@ static irqreturn_t stylus_irq(int irq, void *dev_id)
 
 	if (down)
 		s3c_adc_start(ts.client, 0, 1 << ts.shift);
-	else
+	else{
 		dev_dbg(ts.dev, "%s: count=%d\n", __func__, ts.count);
+		ts_dbg(" count=%d\n", ts.count);
+	}
 
 	if (ts.features & FEAT_PEN_IRQ) {
 		/* Clear pen down/up interrupt */
@@ -258,6 +273,7 @@ static int s3c2410ts_probe(struct platform_device *pdev)
 
 	dev_dbg(dev, "initialising touchscreen\n");
 
+#ifndef CONFIG_S3C_ADC
 	ts.clock = clk_get(dev, "adc");
 	if (IS_ERR(ts.clock)) {
 		dev_err(dev, "cannot get adc clock source\n");
@@ -266,6 +282,7 @@ static int s3c2410ts_probe(struct platform_device *pdev)
 
 	clk_prepare_enable(ts.clock);
 	dev_dbg(dev, "got and enabled clocks\n");
+#endif
 
 	ts.irq_tc = ret = platform_get_irq(pdev, 0);
 	if (ret < 0) {
@@ -317,6 +334,7 @@ static int s3c2410ts_probe(struct platform_device *pdev)
 	ts.input->keybit[BIT_WORD(BTN_TOUCH)] = BIT_MASK(BTN_TOUCH);
 	input_set_abs_params(ts.input, ABS_X, 0, 0x3FF, 0, 0);
 	input_set_abs_params(ts.input, ABS_Y, 0, 0x3FF, 0, 0);
+	input_set_abs_params(ts.input, ABS_PRESSURE, 0, 1, 0, 0);
 
 	ts.input->name = "S3C24XX TouchScreen";
 	ts.input->id.bustype = BUS_HOST;
@@ -369,8 +387,10 @@ static int s3c2410ts_remove(struct platform_device *pdev)
 	free_irq(ts.irq_tc, ts.input);
 	del_timer_sync(&touch_timer);
 
+#ifndef CONFIG_S3C_ADC
 	clk_disable_unprepare(ts.clock);
 	clk_put(ts.clock);
+#endif
 
 	input_unregister_device(ts.input);
 	iounmap(ts.io);
@@ -383,7 +403,9 @@ static int s3c2410ts_suspend(struct device *dev)
 {
 	writel(TSC_SLEEP, ts.io + S3C2410_ADCTSC);
 	disable_irq(ts.irq_tc);
+#ifndef CONFIG_S3C_ADC
 	clk_disable(ts.clock);
+#endif
 
 	return 0;
 }
@@ -393,7 +415,9 @@ static int s3c2410ts_resume(struct device *dev)
 	struct platform_device *pdev = to_platform_device(dev);
 	struct s3c2410_ts_mach_info *info = dev_get_platdata(&pdev->dev);
 
+#ifndef CONFIG_S3C_ADC
 	clk_enable(ts.clock);
+#endif
 	enable_irq(ts.irq_tc);
 
 	/* Initialise registers */

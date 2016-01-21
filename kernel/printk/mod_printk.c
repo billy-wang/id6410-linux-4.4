@@ -17,7 +17,8 @@ struct log_module_tables log_module_table[] = {
 	MOD_UNIT(CLK, 1, LOG_LEVEL_DEFAULT),
 	MOD_UNIT(WDT, 1, LOG_LEVEL_DEFAULT),
 	MOD_UNIT(AXI, 1, LOG_LEVEL_DEFAULT),	
-	MOD_UNIT(V4L2, 1, LOG_LEVEL_DEFAULT),
+	MOD_UNIT(V4L2, 1, LOG_LEVEL_DEFAULT),	
+	MOD_UNIT(TS, 1, LOG_LEVEL_DEFAULT),
 };
 
 /* log sysctl table */
@@ -59,6 +60,7 @@ struct ctl_table log_ctl_table[] = {
 	CTL_UNIT(WDT),	
 	CTL_UNIT(AXI),
 	CTL_UNIT(V4L2),
+	CTL_UNIT(TS),
 	{
 		.procname       = "enable",
 		.data           = &log_module_enable,
