@@ -1032,7 +1032,7 @@ static struct resource s3c_usb_hsotg_resources[] = {
 };
 
 struct platform_device s3c_device_usb_hsotg = {
-	.name		= "s3c-hsotg",
+	.name		= "dwc2",//"s3c-hsotg",
 	.id		= -1,
 	.num_resources	= ARRAY_SIZE(s3c_usb_hsotg_resources),
 	.resource	= s3c_usb_hsotg_resources,

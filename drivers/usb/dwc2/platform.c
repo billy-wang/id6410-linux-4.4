@@ -220,6 +220,7 @@ static int dwc2_lowlevel_hw_init(struct dwc2_hsotg *hsotg)
 		case -ENODEV:
 		case -ENOSYS:
 			hsotg->phy = NULL;
+			dev_warn(hsotg->dev, "getting phy null %d\n", ret);
 			break;
 		case -EPROBE_DEFER:
 			return ret;
@@ -229,6 +230,7 @@ static int dwc2_lowlevel_hw_init(struct dwc2_hsotg *hsotg)
 		}
 	}
 
+
 	if (!hsotg->phy) {
 		hsotg->uphy = devm_usb_get_phy(hsotg->dev, USB_PHY_TYPE_USB2);
 		if (IS_ERR(hsotg->uphy)) {
@@ -237,6 +239,7 @@ static int dwc2_lowlevel_hw_init(struct dwc2_hsotg *hsotg)
 			case -ENODEV:
 			case -ENXIO:
 				hsotg->uphy = NULL;
+				dev_warn(hsotg->dev, "getting uphy null %d\n", ret);
 				break;
 			case -EPROBE_DEFER:
 				return ret;
@@ -263,7 +266,7 @@ static int dwc2_lowlevel_hw_init(struct dwc2_hsotg *hsotg)
 	hsotg->clk = devm_clk_get(hsotg->dev, "otg");
 	if (IS_ERR(hsotg->clk)) {
 		hsotg->clk = NULL;
-		dev_dbg(hsotg->dev, "cannot get otg clock\n");
+		dev_warn(hsotg->dev, "cannot get otg clock\n");
 	}
 
 	/* Regulators */
@@ -387,6 +390,10 @@ static int dwc2_driver_probe(struct platform_device *dev)
 		dev_warn(hsotg->dev,
 			"Configuration mismatch. Forcing peripheral mode\n");
 	}
+
+	//hsotg->dr_mode = USB_DR_MODE_OTG;
+	//dev_warn(hsotg->dev,
+	//			"Configuration mismatch. Forcing otg mode\n");
 
 	retval = dwc2_lowlevel_hw_init(hsotg);
 	if (retval)

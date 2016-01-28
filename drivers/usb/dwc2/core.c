@@ -3075,7 +3075,8 @@ int dwc2_get_hwparams(struct dwc2_hsotg *hsotg)
 	    (hw->snpsid & 0xfffff000) != 0x4f543000) {
 		dev_err(hsotg->dev, "Bad value for GSNPSID: 0x%08x\n",
 			hw->snpsid);
-		return -ENODEV;
+		//return -ENODEV;  /* reading after  In the core reset */
+		hw->snpsid=0x4f54260a;
 	}
 
 	dev_dbg(hsotg->dev, "Core Release: %1x.%1x%1x%1x (snpsid=%x)\n",

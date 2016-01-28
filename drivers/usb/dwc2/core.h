@@ -1166,4 +1166,10 @@ static inline int dwc2_hcd_init(struct dwc2_hsotg *hsotg, int irq)
 { return 0; }
 #endif
 
+#define	dwc2_err(fmt, args...)			log_printk(LOG_MOD_DWC2, LOG_LEVEL_ERR, fmt, ##args)
+#define	dwc2_warning(fmt, args...)	log_printk(LOG_MOD_DWC2, LOG_LEVEL_WARNING, fmt, ##args)
+#define	dwc2_info(fmt, args...)			log_printk(LOG_MOD_DWC2, LOG_LEVEL_INFO, fmt, ##args)
+#define	dwc2_dbg(fmt, args...)			log_printk(LOG_MOD_DWC2, LOG_LEVEL_ERR, fmt, ##args)
+#define	dwc2_rwreg(fmt, args...)		log_printk(LOG_MOD_DWC2, LOG_LEVEL_RWREG, fmt, ##args)
+
 #endif /* __DWC2_CORE_H__ */

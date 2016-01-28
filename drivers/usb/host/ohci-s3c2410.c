@@ -30,6 +30,12 @@
 
 #include "ohci.h"
 
+#define DEBUG
+#define	ohci_err(fmt, args...)			log_printk(LOG_MOD_OHCI, LOG_LEVEL_ERR, fmt, ##args)
+#define	ohci_warning(fmt, args...)	log_printk(LOG_MOD_OHCI, LOG_LEVEL_WARNING, fmt, ##args)
+#define	ohci_info(fmt, args...)			log_printk(LOG_MOD_OHCI, LOG_LEVEL_INFO, fmt, ##args)
+#define	ohci_dbg(fmt, args...)			log_printk(LOG_MOD_OHCI, LOG_LEVEL_ERR, fmt, ##args)
+#define	ohci_rwreg(fmt, args...)		log_printk(LOG_MOD_OHCI, LOG_LEVEL_RWREG, fmt, ##args)
 
 #define valid_port(idx) ((idx) == 1 || (idx) == 2)
 
