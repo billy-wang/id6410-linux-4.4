@@ -29,6 +29,13 @@
 #include <sound/ac97_codec.h>
 #include <sound/soc-topology.h>
 
+#define DEBUG
+#define	ssoc_err(fmt, args...)				log_printk(LOG_MOD_SOC, LOG_LEVEL_ERR, fmt, ##args)
+#define	ssoc_warning(fmt, args...)		log_printk(LOG_MOD_SOC, LOG_LEVEL_WARNING, fmt, ##args)
+#define	ssoc_info(fmt, args...)			log_printk(LOG_MOD_SOC, LOG_LEVEL_INFO, fmt, ##args)
+#define	ssoc_dbg(fmt, args...)				log_printk(LOG_MOD_SOC, LOG_LEVEL_DEBUG, fmt, ##args)
+#define	ssoc_rwreg(fmt, args...)			log_printk(LOG_MOD_SOC, LOG_LEVEL_RWREG, fmt, ##args)
+
 /*
  * Convenience kcontrol builders
  */

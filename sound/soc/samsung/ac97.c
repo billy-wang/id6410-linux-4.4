@@ -30,6 +30,15 @@
 #define S3C_AC97_DAI_PCM 0
 #define S3C_AC97_DAI_MIC 1
 
+//#define DEBUG_REGWRITE 1
+#ifdef DEBUG_REGWRITE
+#undef writel
+#define writel(v, r) do { \
+	pr_err("%s: %08x => %p\n", __func__, (unsigned int)v, r); \
+	__raw_writel(v, r); \
+} while (0)
+#endif /* DEBUG_REGWRITE */
+
 struct s3c_ac97_info {
 	struct clk         *ac97_clk;
 	void __iomem	   *regs;
@@ -55,8 +64,10 @@ static void s3c_ac97_activate(struct snd_ac97 *ac97)
 	u32 ac_glbctrl, stat;
 
 	stat = readl(s3c_ac97.regs + S3C_AC97_GLBSTAT) & 0x7;
-	if (stat == S3C_AC97_GLBSTAT_MAINSTATE_ACTIVE)
+	if (stat == S3C_AC97_GLBSTAT_MAINSTATE_ACTIVE){
+		ssoc_dbg("AC97 already active!\n");
 		return; /* Return if already active */
+	}
 
 	reinit_completion(&s3c_ac97.done);
 
@@ -106,6 +117,8 @@ static unsigned short s3c_ac97_read(struct snd_ac97 *ac97,
 	addr = (stat >> 16) & 0x7f;
 	data = (stat & 0xffff);
 
+	//ssoc_dbg("ac97: reg addr = %08x, rep addr = %08x, stat = %08x, data = %08x\n", reg, addr, stat, data);
+
 	if (addr != reg)
 		pr_err("ac97: req addr = %02x, rep addr = %02x\n",
 			reg, addr);
@@ -148,24 +161,35 @@ static void s3c_ac97_write(struct snd_ac97 *ac97, unsigned short reg,
 
 static void s3c_ac97_cold_reset(struct snd_ac97 *ac97)
 {
+	u32 wm9713_reg;
+
 	pr_debug("AC97: Cold reset\n");
+	ssoc_dbg("AC97: Cold reset\n");
 	writel(S3C_AC97_GLBCTRL_COLDRESET,
 			s3c_ac97.regs + S3C_AC97_GLBCTRL);
 	msleep(1);
 
 	writel(0, s3c_ac97.regs + S3C_AC97_GLBCTRL);
 	msleep(1);
+
+	wm9713_reg=s3c_ac97_read(ac97,0);
+	ssoc_dbg("AC97: wm9713_reg[0] = %08x \n", wm9713_reg);//0x6174
+
 }
 
 static void s3c_ac97_warm_reset(struct snd_ac97 *ac97)
 {
 	u32 stat;
+	u32 wm9713_reg;
 
 	stat = readl(s3c_ac97.regs + S3C_AC97_GLBSTAT) & 0x7;
-	if (stat == S3C_AC97_GLBSTAT_MAINSTATE_ACTIVE)
+	if (stat == S3C_AC97_GLBSTAT_MAINSTATE_ACTIVE){
+		ssoc_dbg("AC97: Warm reset already active return\n");
 		return; /* Return if already active */
+	}
 
 	pr_debug("AC97: Warm reset\n");
+	ssoc_dbg("AC97: Warm reset stat = %08x\n", stat);
 
 	writel(S3C_AC97_GLBCTRL_WARMRESET, s3c_ac97.regs + S3C_AC97_GLBCTRL);
 	msleep(1);
@@ -174,6 +198,9 @@ static void s3c_ac97_warm_reset(struct snd_ac97 *ac97)
 	msleep(1);
 
 	s3c_ac97_activate(ac97);
+
+	wm9713_reg=s3c_ac97_read(ac97,0);
+	ssoc_dbg("AC97: wm9713_reg[0] = %08x \n", wm9713_reg);//0x6174
 }
 
 static irqreturn_t s3c_ac97_irq(int irq, void *dev_id)
@@ -327,6 +354,8 @@ static int s3c_ac97_probe(struct platform_device *pdev)
 	struct resource *mem_res, *dmatx_res, *dmarx_res, *dmamic_res, *irq_res;
 	struct s3c_audio_pdata *ac97_pdata;
 	int ret;
+
+	ssoc_dbg("s3c_ac97_probe\n");
 
 	ac97_pdata = pdev->dev.platform_data;
 	if (!ac97_pdata || !ac97_pdata->cfg_gpio) {

@@ -45,6 +45,7 @@ enum log_module_index {
 	LOG_MOD_TS,				/* touchscreen */
 	LOG_MOD_OHCI,			/* usb host */
 	LOG_MOD_DWC2,			/* HS OTG */
+	LOG_MOD_SOC,			/* Sound soc */
 	/* ... */
 	LOG_MOD_MAX
 };

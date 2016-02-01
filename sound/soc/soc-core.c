@@ -922,6 +922,7 @@ static int soc_bind_dai_link(struct snd_soc_card *card, int num)
 	int i;
 
 	dev_dbg(card->dev, "ASoC: binding %s at idx %d\n", dai_link->name, num);
+	ssoc_dbg("ASoC: binding %s at idx %d\n", dai_link->name, num);
 
 	cpu_dai_component.name = dai_link->cpu_name;
 	cpu_dai_component.of_node = dai_link->cpu_of_node;
@@ -2338,8 +2339,10 @@ int snd_soc_register_card(struct snd_soc_card *card)
 {
 	int i, j, ret;
 
-	if (!card->name || !card->dev)
+	if (!card->name || !card->dev){
+		ssoc_err("%s card not creat\n", __func__);
 		return -EINVAL;
+	}
 
 	for (i = 0; i < card->num_links; i++) {
 		struct snd_soc_dai_link *link = &card->dai_link[i];
@@ -3057,6 +3060,7 @@ int snd_soc_register_codec(struct device *dev,
 	int ret, i;
 
 	dev_dbg(dev, "codec register %s\n", dev_name(dev));
+	ssoc_dbg("codec register %s\n", dev_name(dev));
 
 	codec = kzalloc(sizeof(struct snd_soc_codec), GFP_KERNEL);
 	if (codec == NULL)
@@ -3131,6 +3135,8 @@ int snd_soc_register_codec(struct device *dev,
 	mutex_unlock(&client_mutex);
 
 	dev_dbg(codec->dev, "ASoC: Registered codec '%s'\n",
+		codec->component.name);
+	ssoc_dbg("ASoC: Registered codec '%s'\n",
 		codec->component.name);
 	return 0;
 
@@ -3679,6 +3685,8 @@ EXPORT_SYMBOL_GPL(snd_soc_of_get_dai_link_codecs);
 
 static int __init snd_soc_init(void)
 {
+	ssoc_dbg("snd_soc_init\n");
+
 	snd_soc_debugfs_init();
 	snd_soc_util_init();
 

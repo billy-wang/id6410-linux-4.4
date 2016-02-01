@@ -62,6 +62,8 @@ static int __init smdk_init(void)
 {
 	int ret;
 
+	ssoc_dbg("smdk_init\n");
+
 	smdk_snd_wm9713_device = platform_device_alloc("wm9713-codec", -1);
 	if (!smdk_snd_wm9713_device)
 		return -ENOMEM;
@@ -81,6 +83,8 @@ static int __init smdk_init(void)
 	ret = platform_device_add(smdk_snd_ac97_device);
 	if (ret)
 		goto err3;
+
+	ssoc_dbg("smdk_init end\n");
 
 	return 0;
 

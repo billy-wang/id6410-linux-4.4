@@ -1205,6 +1205,8 @@ static int wm9713_soc_probe(struct snd_soc_codec *codec)
 	struct wm9713_priv *wm9713 = snd_soc_codec_get_drvdata(codec);
 	int reg;
 
+	ssoc_dbg("wm9713_soc_probe\n");
+
 	wm9713->ac97 = snd_soc_new_ac97_codec(codec, WM9713_VENDOR_ID,
 		WM9713_VENDOR_ID_MASK);
 	if (IS_ERR(wm9713->ac97))
@@ -1249,6 +1251,8 @@ static struct snd_soc_codec_driver soc_codec_dev_wm9713 = {
 static int wm9713_probe(struct platform_device *pdev)
 {
 	struct wm9713_priv *wm9713;
+
+	ssoc_dbg("wm9713_probe\n");
 
 	wm9713 = devm_kzalloc(&pdev->dev, sizeof(*wm9713), GFP_KERNEL);
 	if (wm9713 == NULL)

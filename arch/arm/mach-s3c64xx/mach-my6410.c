@@ -48,6 +48,7 @@
 #include <plat/sdhci.h>
 #include <linux/platform_data/touchscreen-s3c2410.h>
 #include <linux/platform_data/s3c-hsotg.h>
+#include <linux/platform_data/asoc-s3c.h>
 #include <linux/mmc/host.h>
 #include <plat/keypad.h>
 
@@ -322,7 +323,7 @@ static struct platform_device *my6410_devices[] __initdata = {
 	&s3c_device_nand,
 	&s3c_device_fb,
 	&samsung_device_pwm,	
-	&s3c64xx_device_iisv4,
+	&s3c64xx_device_ac97,
 	&my6410_lcd_powerdev,
 	&my6410_backlight_device,
 #ifdef CONFIG_SAMSUNG_DEV_ADC
@@ -435,6 +436,8 @@ static void __init my6410_machine_init(void)
 	dwc2_hsotg_set_platdata(&my6410_hsotg_pdata);
 
 	samsung_keypad_set_platdata(&my6410_keypad_data);
+
+	s3c64xx_ac97_setup_gpio(S3C64XX_AC97_GPD);
 
 	/* configure nCS1 width to 16 bits */
 
